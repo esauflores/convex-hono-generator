@@ -11,6 +11,8 @@ pnpm add hono convex-helpers
 pnpm add -D @esauflores/convex-hono-router
 ```
 
+The npm package is scoped, but its executable is `convex-hono-router`.
+
 Keep `convex/http.ts` as the Convex entry point:
 
 ```ts
@@ -31,18 +33,13 @@ routes.get("/", (c) => c.json({ status: "ok" }));
 export default routes;
 ```
 
-Add these scripts to your project's `package.json`:
+Run the generator from your Convex project when you add, remove, or move a route file:
 
-```json
-{
-  "scripts": {
-    "dev": "convex-hono-router generate && convex dev --start \"convex-hono-router watch\"",
-    "deploy": "convex-hono-router generate && convex deploy"
-  }
-}
+```sh
+pnpm exec convex-hono-router generate
 ```
 
-`generate` writes the route file before Convex starts or deploys. During development, `watch` regenerates it when route files change, and `convex dev` picks up the update. The watcher requires Node 20 or newer.
+The command writes `convex/http-routes.gen.ts`. Run it again after changing the route folder structure, then run `convex dev` or `convex deploy` as usual. The CLI requires Node 20 or newer.
 
 Routes mount relative to the nearest parent `http.ts`. For example, the generator attaches `convex/admin/comments/http.ts` to `convex/admin/http.ts` with `adminRoutes.route("/comments", commentsRoutes)`. It then mounts `adminRoutes` at `/admin`, so the child serves `/admin/comments` and shares the parent's middleware.
 

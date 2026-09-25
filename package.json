@@ -17,7 +17,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
-    "convex:dev": "pnpm build && node dist/bin/convex-hono-router.js generate && convex dev --start \"node dist/bin/convex-hono-router.js watch\"",
+    "convex:dev": "convex dev",
     "test:local": "RUN_CONVEX_LOCAL=1 vitest run test/local-backend.test.ts"
   },
   "devDependencies": {

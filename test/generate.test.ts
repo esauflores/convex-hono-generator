@@ -4,33 +4,11 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { HttpRouterWithHono } from "convex-helpers/server/hono";
-import { expect, test, vi } from "vitest";
+import { expect, test } from "vitest";
 
-import { generate, watchRoutes } from "../src/generate.js";
+import { generate } from "../src/generate.js";
 
-test("watch regenerates when a nested route is added or removed", async () => {
-  const project = mkdtempSync(join(tmpdir(), "convex-hono-router-watch-"));
-  const routes = join(project, "convex");
-  mkdirSync(routes);
-  const watcher = watchRoutes(project);
-  try {
-    const nested = join(routes, "admin", "posts");
-    mkdirSync(nested, { recursive: true });
-    writeFileSync(join(nested, "http.ts"), "export default {};\n");
-    const generated = join(routes, "http-routes.gen.ts");
-    await vi.waitFor(() =>
-      expect(readFileSync(generated, "utf8")).toContain('app.route("/admin/posts", postsRoutes);'),
-    );
-
-    rmSync(join(routes, "admin"), { recursive: true });
-    await vi.waitFor(() => expect(readFileSync(generated, "utf8")).not.toContain('from "./admin/posts/http"'));
-  } finally {
-    watcher.close();
-    rmSync(project, { recursive: true, force: true });
-  }
-});
-
-test("folder routes mount inside parent middleware and update when files change", () => {
+test("folder routes mount inside parent middleware and update when regenerated", () => {
   const project = mkdtempSync(join(tmpdir(), "convex-hono-router-"));
   const routes = join(project, "convex");
   try {

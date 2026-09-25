@@ -1,5 +1,4 @@
-import { existsSync, readFileSync, readdirSync, watch, writeFileSync } from "node:fs";
-import type { FSWatcher } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 export function generate(projectDir: string = process.cwd()): string {
@@ -67,33 +66,4 @@ export function generate(projectDir: string = process.cwd()): string {
   const target = join(convexDir, "http-routes.gen.ts");
   if (!existsSync(target) || readFileSync(target, "utf8") !== output) writeFileSync(target, output);
   return target;
-}
-
-export function watchRoutes(projectDir: string = process.cwd()): FSWatcher {
-  const convexDir = join(projectDir, "convex");
-  if (!existsSync(convexDir)) throw new Error(`Convex directory not found: ${convexDir}`);
-
-  const watcher = watch(convexDir, { recursive: true }, (event, filename) => {
-    const path = filename?.toString().replaceAll("\\", "/");
-    if (path === "http-routes.gen.ts" || path?.split("/").includes("_generated")) return;
-    if (event === "change" && path?.split("/").at(-1) !== "http.ts") return;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      try {
-        generate(projectDir);
-      } catch (error) {
-        console.error("Failed to regenerate HTTP routes:", error);
-      }
-    }, 50);
-  });
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  watcher.on("close", () => clearTimeout(timer));
-
-  try {
-    generate(projectDir);
-  } catch (error) {
-    watcher.close();
-    throw error;
-  }
-  return watcher;
 }
