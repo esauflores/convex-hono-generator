@@ -1,17 +1,17 @@
-# Convex Hono Router
+# Convex Hono Generator
 
 Generate Hono route registration from `convex/**/http.ts`. Each folder becomes a URL segment, so `convex/admin/tasks/http.ts` serves `/admin/tasks`. The generated file is `convex/http-routes.gen.ts`.
 
 ## Use it in a Convex project
 
-In your Convex project, install the router and its peer dependencies:
+In your Convex project, install the generator and its peer dependencies:
 
 ```sh
-pnpm add hono convex-helpers
-pnpm add -D @esauflores/convex-hono-router
+pnpm add convex hono convex-helpers
+pnpm add -D @esauflores/convex-hono-generator
 ```
 
-The npm package is scoped, but its executable is `convex-hono-router`.
+The npm package is scoped, but its executable is `convex-hono-generator`.
 
 Keep `convex/http.ts` as the Convex entry point:
 
@@ -36,7 +36,7 @@ export default routes;
 Run the generator from your Convex project when you add, remove, or move a route file:
 
 ```sh
-pnpm exec convex-hono-router generate
+pnpm exec convex-hono-generator generate
 ```
 
 The command writes `convex/http-routes.gen.ts`. Run it again after changing the route folder structure, then run `convex dev` or `convex deploy` as usual. The CLI requires Node 20 or newer.
@@ -47,14 +47,22 @@ A folder named `[id]` mounts as `:id`. The generator ignores `convex/http.ts` an
 
 ## Run the example
 
-The included `convex/` project has CRUD routes for users, projects, tasks, comments, and tags. Each resource supports `GET`, `POST`, `PATCH`, and `DELETE`. List endpoints accept `?limit=20` and a returned `?cursor=...` for pagination. `GET /health` is public. Admin routes use `Bearer ok` as a demo credential; replace it before deploying the example.
+The included `convex/` project provides:
 
-In this repository, generate the example routes and start the local Convex backend in one terminal. Run the integration test in another:
+- CRUD routes for users, projects, tasks, comments, and tags.
+- `GET`, `POST`, `PATCH`, and `DELETE` operations for each resource.
+- Paginated list endpoints with `?limit=1` through `?limit=100` (default `100`). Responses return a `continueCursor`; pass that value as `?cursor=...` to fetch the next page.
+- A public `GET /health` endpoint.
+- Admin routes protected by the demo credential `Bearer ok`.
+
+For this repository, generate the example routes and start the local Convex backend in one terminal:
 
 ```sh
 pnpm convex:generate
 pnpm convex:dev
 ```
+
+In a second terminal, run the integration test:
 
 ```sh
 pnpm test:local

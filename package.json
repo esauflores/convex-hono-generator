@@ -1,8 +1,8 @@
 {
-  "name": "@esauflores/convex-hono-router",
+  "name": "@esauflores/convex-hono-generator",
   "version": "0.1.2",
   "bin": {
-    "convex-hono-router": "./dist/bin/convex-hono-router.js"
+    "convex-hono-generator": "./dist/bin/convex-hono-generator.js"
   },
   "files": [
     "dist"
@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "convex:generate": "pnpm build && node dist/bin/convex-hono-router.js generate",
+    "convex:generate": "pnpm build && node dist/bin/convex-hono-generator.js generate",
     "prepack": "pnpm build",
     "test": "tsc --noEmit && vitest run",
     "lint": "oxlint bin src convex test vitest.config.ts",

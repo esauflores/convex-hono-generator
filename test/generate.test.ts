@@ -9,7 +9,7 @@ import { expect, test } from "vitest";
 import { generate } from "../src/generate.js";
 
 test("folder routes mount inside parent middleware and update when regenerated", () => {
-  const project = mkdtempSync(join(tmpdir(), "convex-hono-router-"));
+  const project = mkdtempSync(join(tmpdir(), "convex-hono-generator-"));
   const routes = join(project, "convex");
   try {
     for (const dir of ["admin", "admin/posts", "public", "public/inbox", "public/posts", "public/users/[id]"]) {
