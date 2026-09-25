@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "bin/**/*.ts",
+    "convex/**/*.ts",
+    "test/**/*.test.ts",
+    "!convex/_generated/**",
+    "!convex/http-routes.gen.ts"
+  ],
+  "project": ["bin/**/*.ts", "src/**/*.ts", "convex/**/*.ts", "test/**/*.ts", "!convex/_generated/**"]
+}

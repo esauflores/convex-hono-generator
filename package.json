@@ -1,0 +1,44 @@
+{
+  "name": "@esauflores/convex-hono-router",
+  "version": "0.1.0",
+  "bin": {
+    "convex-hono-router": "./dist/bin/convex-hono-router.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "pnpm build",
+    "test": "tsc --noEmit && vitest run",
+    "lint": "oxlint bin src convex test vitest.config.ts",
+    "lint:fix": "oxlint --fix bin src convex test vitest.config.ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "knip": "knip",
+    "convex:dev": "pnpm build && node dist/bin/convex-hono-router.js generate && convex dev --start \"node dist/bin/convex-hono-router.js watch\"",
+    "test:local": "RUN_CONVEX_LOCAL=1 vitest run test/local-backend.test.ts"
+  },
+  "devDependencies": {
+    "@convex-dev/eslint-plugin": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "convex": "^1.46.0",
+    "convex-helpers": "^0.1.124",
+    "hono": "^4.13.9",
+    "knip": "^6.38.0",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
+  },
+  "peerDependencies": {
+    "convex": "^1.46.0",
+    "convex-helpers": "^0.1.124",
+    "hono": "^4.13.9"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.27.1"
+}
