@@ -1,6 +1,6 @@
 {
   "name": "@esauflores/convex-hono-router",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "bin": {
     "convex-hono-router": "./dist/bin/convex-hono-router.js"
   },
