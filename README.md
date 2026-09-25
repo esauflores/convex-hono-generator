@@ -49,9 +49,10 @@ A folder named `[id]` mounts as `:id`. The generator ignores `convex/http.ts` an
 
 The included `convex/` project has CRUD routes for users, projects, tasks, comments, and tags. Each resource supports `GET`, `POST`, `PATCH`, and `DELETE`. List endpoints accept `?limit=20` and a returned `?cursor=...` for pagination. `GET /health` is public. Admin routes use `Bearer ok` as a demo credential; replace it before deploying the example.
 
-Start the local Convex backend in one terminal, then run the integration test in another:
+In this repository, generate the example routes and start the local Convex backend in one terminal. Run the integration test in another:
 
 ```sh
+pnpm convex:generate
 pnpm convex:dev
 ```
 

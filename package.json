@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "convex:generate": "pnpm build && node dist/bin/convex-hono-router.js generate",
     "prepack": "pnpm build",
     "test": "tsc --noEmit && vitest run",
     "lint": "oxlint bin src convex test vitest.config.ts",
