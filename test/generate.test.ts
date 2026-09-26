@@ -18,6 +18,7 @@ test("folder routes mount inside parent middleware and update when regenerated",
     }
 
     const output = readFileSync(generate(project), "utf8");
+    expect(generate(project)).toBe(join(routes, "http.ts"));
     expect(output).toContain('import adminRoutes from "./admin/http";');
     expect(output).toContain('import postsRoutes from "./admin/posts/http";');
     expect(output).toContain('import postsRoutes2 from "./public/posts/http";');
@@ -48,8 +49,8 @@ test("folder routes mount inside parent middleware and update when regenerated",
 test("generated Hono app applies parent middleware to child routes", async () => {
   const project = fileURLToPath(new URL("../", import.meta.url));
   generate(project);
-  const { default: app } = await import("../convex/http-routes.gen.ts");
-  const output = readFileSync(new URL("../convex/http-routes.gen.ts", import.meta.url), "utf8");
+  const { app } = await import("../convex/http.ts");
+  const output = readFileSync(new URL("../convex/http.ts", import.meta.url), "utf8");
   expect(output).toContain('// health routes\napp.route("/health", healthRoutes);');
   expect(output).not.toContain('healthRoutes.route("/", healthRoutes)');
   expect((await app.request("/admin/users")).status).toBe(401);

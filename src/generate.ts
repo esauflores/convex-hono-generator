@@ -29,13 +29,15 @@ export function generate(projectDir: string = process.cwd()): string {
     return { ...route, name };
   });
 
-  const imports = namedRoutes.map(
-    (route) =>
-      `import ${route.name} from ${JSON.stringify(`./${relative(convexDir, route.path).split(sep).join("/").replace(/\.ts$/, "")}`)};`,
-  );
-  imports.unshift('import { Hono } from "hono";');
-  imports.unshift('import type { HonoWithConvex } from "convex-helpers/server/hono";');
-  imports.unshift('import type { ActionCtx } from "./_generated/server";');
+  const modulePath = (path: string) => `./${relative(convexDir, path).split(sep).join("/").replace(/\.ts$/, "")}`;
+  const imports = [
+    'import type { HonoWithConvex } from "convex-helpers/server/hono";',
+    'import { HttpRouterWithHono } from "convex-helpers/server/hono";',
+    'import { Hono } from "hono";',
+    "",
+    'import type { ActionCtx } from "./_generated/server";',
+    ...namedRoutes.map(({ name, path }) => `import ${name} from ${JSON.stringify(modulePath(path))};`),
+  ];
 
   const lines = ["const app: HonoWithConvex<ActionCtx> = new Hono();"];
   namedRoutes.sort(
@@ -60,10 +62,10 @@ export function generate(projectDir: string = process.cwd()): string {
     const mount = `/${relativeSegments.map((segment) => segment.replace(/^\[([A-Za-z_$][\w$]*)\]$/, ":$1")).join("/")}`;
     lines.push(`${parent?.name ?? "app"}.route(${JSON.stringify(mount)}, ${route.name});`);
   }
-  lines.push("", "export default app;");
+  lines.push("", "export { app };", "export default new HttpRouterWithHono(app);");
 
   const output = `${imports.join("\n")}\n\n${lines.join("\n")}\n`;
-  const target = join(convexDir, "http-routes.gen.ts");
+  const target = join(convexDir, "http.ts");
   if (!existsSync(target) || readFileSync(target, "utf8") !== output) writeFileSync(target, output);
   return target;
 }
