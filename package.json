@@ -13,13 +13,13 @@
     "convex:generate": "pnpm build && node dist/bin/convex-hono-generator.js generate",
     "prepack": "pnpm build",
     "test": "tsc --noEmit && vitest run",
+    "test:local": "RUN_CONVEX_LOCAL=1 vitest run test/local-backend.test.ts",
     "lint": "oxlint bin src convex test vitest.config.ts",
     "lint:fix": "oxlint --fix bin src convex test vitest.config.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
-    "convex:dev": "convex dev",
-    "test:local": "RUN_CONVEX_LOCAL=1 vitest run test/local-backend.test.ts"
+    "convex:dev": "convex dev"
   },
   "devDependencies": {
     "@convex-dev/eslint-plugin": "^5.0.0",
