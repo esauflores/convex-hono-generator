@@ -22,6 +22,7 @@ import type * as admin_users_data from "../admin/users/data.js";
 import type * as admin_users_http from "../admin/users/http.js";
 import type * as health_http from "../health/http.js";
 import type * as http from "../http.js";
+import type * as http_gen from "../http.gen.js";
 
 import type {
   ApiFromModules,
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   "admin/users/http": typeof admin_users_http;
   "health/http": typeof health_http;
   http: typeof http;
+  "http.gen": typeof http_gen;
 }>;
 
 /**

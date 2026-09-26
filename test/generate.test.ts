@@ -12,13 +12,28 @@ test("folder routes mount inside parent middleware and update when regenerated",
   const project = mkdtempSync(join(tmpdir(), "convex-hono-generator-"));
   const routes = join(project, "convex");
   try {
-    for (const dir of ["admin", "admin/posts", "public", "public/inbox", "public/posts", "public/users/[id]"]) {
+    for (const dir of [
+      "admin",
+      "admin/posts",
+      "admin/_private",
+      "public",
+      "public/inbox",
+      "public/posts",
+      "public/users/[id]",
+      "_layout",
+    ]) {
       mkdirSync(join(routes, dir), { recursive: true });
       writeFileSync(join(routes, dir, "http.ts"), "export default {};\n");
     }
 
     const output = readFileSync(generate(project), "utf8");
-    expect(generate(project)).toBe(join(routes, "http.ts"));
+    expect(generate(project)).toBe(join(routes, "http.gen.ts"));
+    expect(readFileSync(join(routes, "http.ts"), "utf8")).toBe(
+      'import { HttpRouterWithHono } from "convex-helpers/server/hono";\n\nimport app from "./http.gen";\n\nexport default new HttpRouterWithHono(app);\n',
+    );
+    writeFileSync(join(routes, "http.ts"), 'export { default } from "./http.gen";\n');
+    generate(project);
+    expect(readFileSync(join(routes, "http.ts"), "utf8")).toBe('export { default } from "./http.gen";\n');
     expect(output).toContain('import adminRoutes from "./admin/http";');
     expect(output).toContain('import postsRoutes from "./admin/posts/http";');
     expect(output).toContain('import postsRoutes2 from "./public/posts/http";');
@@ -27,6 +42,8 @@ test("folder routes mount inside parent middleware and update when regenerated",
     expect(output).toContain('publicRoutes.route("/posts", postsRoutes2);');
     expect(output).toContain('app.route("/public", publicRoutes);');
     expect(output).toContain('publicRoutes.route("/users/:id", idRoutes);');
+    expect(output).not.toContain("_private");
+    expect(output).not.toContain("_layout");
     expect(output.indexOf('adminRoutes.route("/posts"')).toBeLessThan(output.indexOf('app.route("/admin"'));
     expect(output.match(/\/\/ admin routes/g)).toHaveLength(1);
     expect(output.match(/\/\/ public routes/g)).toHaveLength(1);
@@ -49,8 +66,8 @@ test("folder routes mount inside parent middleware and update when regenerated",
 test("generated Hono app applies parent middleware to child routes", async () => {
   const project = fileURLToPath(new URL("../", import.meta.url));
   generate(project);
-  const { app } = await import("../convex/http.ts");
-  const output = readFileSync(new URL("../convex/http.ts", import.meta.url), "utf8");
+  const app = (await import("../convex/http.gen.ts")).default;
+  const output = readFileSync(new URL("../convex/http.gen.ts", import.meta.url), "utf8");
   expect(output).toContain('// health routes\napp.route("/health", healthRoutes);');
   expect(output).not.toContain('healthRoutes.route("/", healthRoutes)');
   expect((await app.request("/admin/users")).status).toBe(401);

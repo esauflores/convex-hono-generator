@@ -1,6 +1,6 @@
 {
   "name": "@esauflores/convex-hono-generator",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "bin": {
     "convex-hono-generator": "./dist/bin/convex-hono-generator.js"
   },

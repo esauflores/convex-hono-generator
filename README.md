@@ -1,6 +1,6 @@
 # Convex Hono Generator
 
-Generate Hono route registration from `convex/**/http.ts`. Each folder becomes a URL segment, so `convex/admin/tasks/http.ts` serves `/admin/tasks`. The generator writes the root Convex entrypoint to `convex/http.ts`.
+Generate Hono route registration from `convex/**/http.ts`. Each folder becomes a URL segment, so `convex/admin/tasks/http.ts` serves `/admin/tasks`. The generator writes the generated route implementation to `convex/http.gen.ts` and the Convex entrypoint to `convex/http.ts`.
 
 ## Use it in a Convex project
 
@@ -30,11 +30,22 @@ Run the generator from your Convex project when you add, remove, or move a route
 pnpm exec convex-hono-generator generate
 ```
 
-The command writes `convex/http.ts`. Run it again after changing the route folder structure, then run `convex dev` or `convex deploy` as usual. The CLI requires Node 20 or newer.
+The command writes `convex/http.gen.ts` and creates `convex/http.ts` when it is missing. Run it again after changing the route folder structure, then run `convex dev` or `convex deploy` as usual. The CLI requires Node 20 or newer. Keep `http.ts` as the user-owned entrypoint when you need to compose additional routers:
+
+```ts
+import { HttpRouterWithHono } from "convex-helpers/server/hono";
+
+import app from "./http.gen";
+import otherRoutes from "./other/http";
+
+app.route("/other", otherRoutes);
+
+export default new HttpRouterWithHono(app);
+```
 
 Routes mount relative to the nearest parent `http.ts`. For example, the generator attaches `convex/admin/comments/http.ts` to `convex/admin/http.ts` with `adminRoutes.route("/comments", commentsRoutes)`. It then mounts `adminRoutes` at `/admin`, so the child serves `/admin/comments` and shares the parent's middleware.
 
-A folder named `[id]` mounts as `:id`. The generator ignores `convex/http.ts` and all `_generated` folders.
+A folder named `[id]` mounts as `:id`. The generator ignores the root `http.ts` and `http.gen.ts` files, along with all folders whose names start with `_`, including `_generated`.
 
 ## Run the example
 
